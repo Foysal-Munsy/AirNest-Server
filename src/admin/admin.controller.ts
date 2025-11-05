@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { AdminService } from './admin.service';
 
 @Controller('admin')
@@ -8,5 +8,11 @@ export class AdminController {
   @Get('users')
   getAllUsers() {
     return this.adminService.getAllUsers();
+  }
+
+  // GET /admin/user/:id
+  @Get('user/:id')
+  getUserById(@Param('id') id: string) {
+    return this.adminService.getUserById(Number(id));
   }
 }

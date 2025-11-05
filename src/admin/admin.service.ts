@@ -11,4 +11,10 @@ export class AdminService {
   getAllUsers() {
     return { message: 'Successfully fetched all users', data: this.users };
   }
+
+  getUserById(id: number) {
+    const user = this.users.find((u) => u.id === id);
+    if (!user) return 'User not found';
+    return { message: 'User fetched successfully', data: user };
+  }
 }
