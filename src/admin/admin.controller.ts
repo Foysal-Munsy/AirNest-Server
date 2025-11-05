@@ -41,4 +41,9 @@ export class AdminController {
   resetRoles() {
     return this.adminService.resetUserRoles();
   }
+  // GET /admin/count-users
+  @Get('count-users')
+  countUsers() {
+    return this.adminService.countUsers();
+  }
 }

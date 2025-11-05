@@ -50,4 +50,7 @@ export class AdminService {
     this.users = this.users.map((u) => ({ ...u, role: 'GUEST' }));
     return { message: 'All user roles reset to GUEST', data: this.users };
   }
+  countUsers() {
+    return { message: 'Total users counted', total: this.users.length };
+  }
 }
