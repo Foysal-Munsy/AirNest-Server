@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class AdminService {
@@ -16,5 +17,11 @@ export class AdminService {
     const user = this.users.find((u) => u.id === id);
     if (!user) return 'User not found';
     return { message: 'User fetched successfully', data: user };
+  }
+
+  createUser(dto: CreateUserDto) {
+    const newUser = { id: Date.now(), ...dto };
+    this.users.push(newUser);
+    return { message: 'User created successfully', data: newUser };
   }
 }
