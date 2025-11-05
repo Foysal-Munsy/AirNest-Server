@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -30,5 +30,10 @@ export class AdminController {
   @Delete('delete-user/:id')
   deleteUser(@Param('id') id: string) {
     return this.adminService.deleteUser(Number(id));
+  }
+  // GET /admin/find-user?email=
+  @Get('find-user')
+  findUserByEmail(@Query('email') email: string) {
+    return this.adminService.findUserByEmail(email);
   }
 }

@@ -40,4 +40,10 @@ export class AdminService {
     this.users = this.users.filter((u) => u.id !== id);
     return { message: `User with ID ${id} deleted successfully` };
   }
+  //
+  findUserByEmail(email: string) {
+    const user = this.users.find((u) => u.email === email);
+    if (!user) return 'User not found';
+    return { message: 'User fetched successfully', data: user };
+  }
 }
