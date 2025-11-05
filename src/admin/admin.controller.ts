@@ -36,4 +36,9 @@ export class AdminController {
   findUserByEmail(@Query('email') email: string) {
     return this.adminService.findUserByEmail(email);
   }
+  // PATCH /admin/reset-roles
+  @Patch('reset-roles')
+  resetRoles() {
+    return this.adminService.resetUserRoles();
+  }
 }

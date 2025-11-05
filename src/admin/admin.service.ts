@@ -46,4 +46,8 @@ export class AdminService {
     if (!user) return 'User not found';
     return { message: 'User fetched successfully', data: user };
   }
+  resetUserRoles() {
+    this.users = this.users.map((u) => ({ ...u, role: 'GUEST' }));
+    return { message: 'All user roles reset to GUEST', data: this.users };
+  }
 }
