@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-
+import { UpdateUserDto } from './dto/update-user.dto';
 @Injectable()
 export class AdminService {
   private readonly users = [
@@ -23,5 +23,13 @@ export class AdminService {
     const newUser = { id: Date.now(), ...dto };
     this.users.push(newUser);
     return { message: 'User created successfully', data: newUser };
+  }
+
+  updateUser(id: number, dto: UpdateUserDto) {
+    const index = this.users.findIndex((u) => u.id === id);
+    if (index === -1) return 'User not found';
+
+    this.users[index] = { ...this.users[index], ...dto };
+    return { message: 'User updated successfully', data: this.users[index] };
   }
 }
