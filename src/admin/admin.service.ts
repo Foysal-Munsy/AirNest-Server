@@ -1,31 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+type User = {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+};
 @Injectable()
 export class AdminService {
-  private users = [
+  private users: User[] = [
     { id: 1, name: 'Foysal', email: 'foysal@gmail.com', role: 'HOST' },
     { id: 2, name: 'Nahid', email: 'nahid@gmail.com', role: 'GUEST' },
   ];
 
   // fetch all users
-  getAllUsers() {
+  getAllUsers(): string | object {
     return { message: 'Successfully fetched all users', data: this.users };
   }
 
-  getUserById(id: number) {
+  getUserById(id: number): string | object {
     const user = this.users.find((u) => u.id === id);
     if (!user) return 'User not found';
     return { message: 'User fetched successfully', data: user };
   }
 
-  createUser(dto: CreateUserDto) {
+  createUser(dto: CreateUserDto): string | object {
     const newUser = { id: Date.now(), ...dto };
     this.users.push(newUser);
     return { message: 'User created successfully', data: newUser };
   }
 
-  updateUser(id: number, dto: UpdateUserDto) {
+  updateUser(id: number, dto: UpdateUserDto): string | object {
     const index = this.users.findIndex((u) => u.id === id);
     if (index === -1) return 'User not found';
 
@@ -33,7 +39,7 @@ export class AdminService {
     return { message: 'User updated successfully', data: this.users[index] };
   }
 
-  deleteUser(id: number) {
+  deleteUser(id: number): string | object {
     const exists = this.users.some((u) => u.id === id);
     if (!exists) return 'User not found';
 
@@ -41,16 +47,16 @@ export class AdminService {
     return { message: `User with ID ${id} deleted successfully` };
   }
   //
-  findUserByEmail(email: string) {
+  findUserByEmail(email: string): string | object {
     const user = this.users.find((u) => u.email === email);
     if (!user) return 'User not found';
-    return { message: 'User fetched successfully', data: user };
+    return { name: user.name };
   }
-  resetUserRoles() {
+  resetUserRoles(): string | object {
     this.users = this.users.map((u) => ({ ...u, role: 'GUEST' }));
     return { message: 'All user roles reset to GUEST', data: this.users };
   }
-  countUsers() {
+  countUsers(): string | object {
     return { message: 'Total users counted', total: this.users.length };
   }
 }
