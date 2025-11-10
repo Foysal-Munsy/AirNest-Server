@@ -14,6 +14,7 @@ import { AdminService } from './admin.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage, MulterError } from 'multer';
 
 @Controller('admin')
 export class AdminController {
@@ -30,15 +31,28 @@ export class AdminController {
   }
   // POST /admin/create-user
   @Post('create-user')
-  @UseInterceptors(FileInterceptor('nidImage'))
+  @UseInterceptors(
+    FileInterceptor('nidImage', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          cb(null, Date.now() + '-' + file.originalname);
+        },
+      }),
+      limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
+      fileFilter: (req, file, cb) => {
+        if (file.originalname.match(/\.(jpg|jpeg|png|webp)$/)) cb(null, true);
+        else cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+      },
+    }),
+  )
   createUser(
     @Body() dto: CreateUserDto,
     @UploadedFile() file: Express.Multer.File,
   ): string | object {
-    if (file && file.size > 2 * 1024 * 1024) {
-      return 'Image size must be less than 2MB';
-    }
-    return this.adminService.createUser({ ...dto, nidImage: file });
+    console.log(file.path);
+    dto.nidImage = file.path;
+    return this.adminService.createUser(dto);
   }
   // PATCH /admin/update-user/:id
   @Patch('update-user/:id')

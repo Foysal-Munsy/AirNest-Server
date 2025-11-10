@@ -8,8 +8,9 @@ export class CreateUserDto {
 
   @IsNotEmpty({ message: 'Email is required' })
   @IsEmail()
-  @Matches(/\.xyz$/)
+  @Matches(/\.xyz$/, { message: 'use .xyz' })
   email: string;
+  @IsNotEmpty({ message: 'Role is required' })
   role: string; // host or guest
 
   @IsNotEmpty({ message: 'NID number is required' })
@@ -17,5 +18,5 @@ export class CreateUserDto {
   nidNumber: string;
 
   @IsOptional()
-  nidImage?: Express.Multer.File;
+  nidImage?: string;
 }

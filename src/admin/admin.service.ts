@@ -26,7 +26,14 @@ export class AdminService {
   }
 
   createUser(dto: CreateUserDto): string | object {
-    const newUser = { id: Date.now(), ...dto };
+    const newUser = {
+      id: Date.now(),
+      name: dto.name,
+      email: dto.email,
+      role: dto.role,
+      nidNumber: dto.nidNumber,
+      nidImage: dto.nidImage,
+    };
     this.users.push(newUser);
     return { message: 'User created successfully', data: newUser };
   }
