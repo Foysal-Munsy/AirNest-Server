@@ -7,10 +7,13 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('admin')
 export class AdminController {
@@ -27,8 +30,15 @@ export class AdminController {
   }
   // POST /admin/create-user
   @Post('create-user')
-  createUser(@Body() dto: CreateUserDto): string | object {
-    return this.adminService.createUser(dto);
+  @UseInterceptors(FileInterceptor('nidImage'))
+  createUser(
+    @Body() dto: CreateUserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ): string | object {
+    if (file && file.size > 2 * 1024 * 1024) {
+      return 'Image size must be less than 2MB';
+    }
+    return this.adminService.createUser({ ...dto, nidImage: file });
   }
   // PATCH /admin/update-user/:id
   @Patch('update-user/:id')
