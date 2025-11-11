@@ -1,12 +1,15 @@
 import { NotFoundException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './cretae_user.dto';
 import { UpdateUserDto } from './Update_user.dto';
+import { Express } from 'express';
 type user ={
      id: number;
      name : string;
-    email: string;
+    password: any;
+    email?: string;
     number: string;
-    profilepic: string;
+    profilepic?: string;
+    pdfdocument?:string;
 };
 
 @Injectable()
@@ -14,8 +17,8 @@ export class TravellerService {
 
     private users: user[] = [];
     private counter = 1;
-    create(createtraveller:CreateUserDto):user{
-        const newuser: user = {id:this.counter++,...createtraveller};
+    create(createtraveller:CreateUserDto, file:Express.Multer.File):user{
+        const newuser: user = {id:this.counter++,...createtraveller, pdfdocument: file.originalname};
         
 
         this.users.push(newuser)

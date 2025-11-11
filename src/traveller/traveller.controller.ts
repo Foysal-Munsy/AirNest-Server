@@ -1,7 +1,9 @@
-import { Controller ,Get,Post,Delete,Patch,Body,Param, Query, Redirect} from '@nestjs/common';
+import { Controller ,Get,Post,Delete,Patch,Body,Param, Query, Redirect, UseInterceptors, UploadedFile} from '@nestjs/common';
 import{TravellerService} from './traveller.service';
 import { CreateUserDto } from './cretae_user.dto';
 import { UpdateUserDto } from './Update_user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { PdfvalidationpipePipe } from 'src/common/pipes/pdfvalidationpipe/pdfvalidationpipe.pipe';
 
 
 
@@ -11,10 +13,11 @@ export class TravellerController {
 
     constructor(private readonly travellerservice  :TravellerService){}
 
-@Post()
-create(@Body()createuserdto:CreateUserDto){
+@Post('files')
+@UseInterceptors(FileInterceptor('file'))
+create(@Body()createuserdto:CreateUserDto,@UploadedFile(new PdfvalidationpipePipe())file: Express.Multer.File){
 
- return this.travellerservice.create(createuserdto);
+ return this.travellerservice.create(createuserdto,file);
 }
 
 @Get()
@@ -24,6 +27,7 @@ getalluser(){
 
 @Get(':id')
 getbyid(@Param('id') id:string){
+
 
     return this.travellerservice.findone(id);
 }
