@@ -17,13 +17,21 @@ export class AdminService {
   }
 
   async findByFullname(substring: string): Promise<AdminEntity[]> {
-    return this.userRepository.find({
+    const results = await this.userRepository.find({
       where: { fullname: ILike(`%${substring}%`) },
     });
+    if (!results.length) {
+      throw new NotFoundException('No admins found for provided fullname');
+    }
+    return results;
   }
 
   async getUserByUsername(username: string): Promise<AdminEntity | null> {
-    return this.userRepository.findOneBy({ username: username });
+    const result = await this.userRepository.findOneBy({ username: username });
+    if (!result) {
+      throw new NotFoundException('User not found');
+    }
+    return result;
   }
 
   async deleteUserByUsername(username: string): Promise<{ message: string }> {
