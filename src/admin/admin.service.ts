@@ -15,4 +15,12 @@ export class AdminService {
     const admin = this.userRepository.create(dto);
     return this.userRepository.save(admin);
   }
+
+  // async findByFullname(substring: string): Promise<AdminEntity[]> {
+  //   return this.userRepository.find({ where: { fullname: substring } });
+  // }
+
+  async getUserByUsername(username: string): Promise<AdminEntity | null> {
+    return this.userRepository.findOneBy({ username: username });
+  }
 }
