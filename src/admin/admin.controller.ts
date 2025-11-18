@@ -20,4 +20,9 @@ export class AdminController {
   async getUserByUsername(@Param('username') username: string) {
     return this.adminService.getUserByUsername(username);
   }
+
+  @Post('delete/:username')
+  async deleteUserByUsername(@Param('username') username: string) {
+    return this.adminService.deleteUserByUsername(username);
+  }
 }

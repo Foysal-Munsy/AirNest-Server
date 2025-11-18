@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AdminEntity } from './admin.entity';
@@ -22,5 +22,11 @@ export class AdminService {
 
   async getUserByUsername(username: string): Promise<AdminEntity | null> {
     return this.userRepository.findOneBy({ username: username });
+  }
+
+  async deleteUserByUsername(username: string): Promise<{ message: string }> {
+    const result = await this.userRepository.delete({ username });
+    if (!result.affected) throw new NotFoundException('User not found');
+    return { message: 'User deleted successfully' };
   }
 }
