@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TravellerController } from './traveller/traveller.controller';
-import { TravellerService } from './traveller/traveller.service';
+
 import { TravellerModule } from './traveller/traveller.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -18,7 +17,8 @@ autoLoadEntities: true,
 synchronize: true,
 } ),
 ],
-  controllers: [AppController,TravellerController],
-  providers: [AppService, TravellerService],
+  controllers: [AppController],
+  providers: [AppService],
 })
+
 export class AppModule {}

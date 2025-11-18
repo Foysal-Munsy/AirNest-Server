@@ -2,81 +2,92 @@ import { NotFoundException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './cretae_user.dto';
 import { UpdateUserDto } from './Update_user.dto';
 import { Express } from 'express';
-type user ={
-     id: number;
-     name : string;
-    password: any;
-    email?: string;
-    number: string;
-    profilepic?: string;
-    pdfdocument?:string;
-};
+import { InjectRepository } from '@nestjs/typeorm';
+import { TravellerEntity } from './traveller.entity';
+import { Repository } from 'typeorm';
+import { IsNull } from 'typeorm';
 
 @Injectable()
 export class TravellerService {
 
-    private users: user[] = [];
-    private counter = 1;
-    create(createtraveller:CreateUserDto, file:Express.Multer.File):user{
-        const newuser: user = {id:this.counter++,...createtraveller, pdfdocument: file.originalname};
+
+  constructor(@InjectRepository(TravellerEntity) private travellerrepo: Repository<TravellerEntity>){}
+  async create(createuserdto:CreateUserDto,filename:string): Promise<TravellerEntity>
+  {
+    const newtraveller = this.travellerrepo.create({...createuserdto,pdfdoc:filename})
+    return await this.travellerrepo.save(newtraveller);
+  }
         
 
-        this.users.push(newuser)
-        return newuser;}
 
-
-    findall(){
-        return this.users;
+    async findall(): Promise<TravellerEntity[]>
+    {
+     return await this.travellerrepo.find()    
     }  
     
-    findone(id:string){
-        const Id= Number(id);
-        return this.users.find((x)=>x.id === Id);
-    }
-
-    getname(name:string){
-
-        return this.users.filter((x)=>x.name === name);
-    }
-
-    update(id: string, updateUserDto: UpdateUserDto) :user |undefined {
-        const user = this.findone(id);
-        if (!user) 
-        return undefined;
-
-        Object.assign(user, updateUserDto);
-        return user;}
-   
-   
-    delete(id:string){
-
-        const user= this.users.find((x)=> x.id===Number(id));
-
-        if(!user){
-            return 'not found';
-        }
-
-        this.users= this.users.filter((x)=>x.id !==Number(id));
-        return "remove done ";
-
-    }
-    
-    profilepic(id:string)
+    async findone(id:number):Promise<TravellerEntity|null> 
     {
-        const user = this.findone(id);
+        return await this.travellerrepo.findOneBy({id:id});
+    }
+
+    async getnull(): Promise<TravellerEntity[]>
+    {
+        return await this.travellerrepo.find({
+            where: {
+                fullname: IsNull(),
+            },
+        });
+    }
+
+
+
+   
+
+    async updatephone(id:number, newphone:string) :Promise<TravellerEntity|null>
+     {
+        await this.travellerrepo.update(id,{phone:newphone})
+        return await this.travellerrepo.findOneBy({id});
+    }
+        
+   
+   
+    async delete(id:string):Promise<void>{
+
+         await this.travellerrepo.delete(id);
+
+            }
+
+    
+   async profilepic(id:number):Promise<string|null>
+    {
+        const user = await this.findone(id);
 
         if(!user){
             throw new NotFoundException('user not found');
         }
 
         if(!user.profilepic){
-            throw new NotFoundException('picture not found');
+            throw  new NotFoundException('picture not found');
 
         }
 
         return user.profilepic;
     }
-}
+
+
+    async pdfdoc(id:number):Promise<string|null>
+    {
+        const user = await this.findone(id);
+
+        if(!user){
+            throw new NotFoundException('user not found');
+        }
+
+        
+
+        return user.pdfdoc;
+    }
+
 
     
-
+}

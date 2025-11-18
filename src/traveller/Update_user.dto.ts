@@ -1,9 +1,28 @@
-export class UpdateUserDto{
+import { IsString, IsEmail, IsOptional} from 'class-validator'; 
+ import { IsNumberString } from 'class-validator'; 
 
-    name? : string;
+export class UpdateUserDto {
+    @IsOptional()
+    @IsString()
+    name?: string;
+
+    @IsOptional()
+    @IsEmail()
     email?: string;
-    password?:any;
+
+    @IsOptional()
+    @IsString()
+    password?: string;
+
+    @IsOptional()
+    @IsString()
     number?: string;
+
+    @IsOptional()
+    @IsString()
     profilepic?: string;
-    pdfdocument?:string;
+
+    @IsOptional()
+    @IsNumberString()
+    pdfdocument?: string;
 }

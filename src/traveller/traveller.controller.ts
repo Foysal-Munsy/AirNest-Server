@@ -4,6 +4,7 @@ import { CreateUserDto } from './cretae_user.dto';
 import { UpdateUserDto } from './Update_user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PdfvalidationpipePipe } from 'src/common/pipes/pdfvalidationpipe/pdfvalidationpipe.pipe';
+import { ParseIntPipe } from '@nestjs/common';
 
 
 
@@ -15,43 +16,58 @@ export class TravellerController {
 
 @Post('files')
 @UseInterceptors(FileInterceptor('file'))
-create(@Body()createuserdto:CreateUserDto,@UploadedFile(new PdfvalidationpipePipe())file: Express.Multer.File){
+async create(@Body()createuserdto:CreateUserDto,@UploadedFile(new PdfvalidationpipePipe())file: Express.Multer.File){
 
- return this.travellerservice.create(createuserdto,file);
+ return await this.travellerservice.create(createuserdto,file.originalname);
 }
 
 @Get()
-getalluser(){
-    return this.travellerservice.findall();
+async getalluser(){
+    return await this.travellerservice.findall();
+}
+
+@Get('nullname')
+async getnuller(){
+    return await this.travellerservice.getnull();
 }
 
 @Get(':id')
-getbyid(@Param('id') id:string){
+async getbyid(@Param('id') id:number){
 
 
-    return this.travellerservice.findone(id);
-}
-@Get('search')
-getbyname(@Query('name') name: string){
-    return this.travellerservice.getname(name);
+    return await this.travellerservice.findone(id);
 }
 
-@Patch(':id')
-update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.travellerservice.update(id, updateUserDto);
+
+ @Patch(':id')
+async updatephone(@Param('id') id: number, @Body('phone') newphone:string) {
+    const updated= await this.travellerservice.updatephone(id, newphone);
+    return updated;
   }
 
-@Delete(':id')
-remove(@Param('id') id: string) {
-    return this.travellerservice.delete(id);
+ @Delete(':id')
+async remove(@Param('id',ParseIntPipe) id: string) {
+     await this.travellerservice.delete(id);
+     return {message:'deleted'};
   }
 
 
 @Get(':id/profile')
-@Redirect()
-profilepicture(@Param('id')id:string){
-    const pic = this.travellerservice.profilepic(id);
-    return {url : pic};
+async profilepicture(@Param('id')id:number){
+    const file = await this.travellerservice.profilepic(id);
+    return file;
+    
 }
+
+@Get(':id/pdf')
+async pdffile(@Param('id')id:number){
+     
+const pdffile=  await this.travellerservice.pdfdoc(id); 
+    return pdffile;
+    
+
+
+}
+
 
 }
