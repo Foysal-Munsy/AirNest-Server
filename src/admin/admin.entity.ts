@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryColumn, BeforeInsert } from 'typeorm';
-@Entity('admin')
+@Entity()
 export class AdminEntity {
   @PrimaryColumn()
   id: number;
@@ -15,6 +15,6 @@ export class AdminEntity {
 
   @BeforeInsert()
   generateId() {
-    this.id = Math.floor(Math.random() * 1000000);
+    this.id = Math.floor(Math.random() * 1000);
   }
 }
