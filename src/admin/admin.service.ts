@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { AdminEntity } from './admin.entity';
 import { CreateAdminDto } from './dto/create-admin.dto';
 
@@ -16,9 +16,11 @@ export class AdminService {
     return this.userRepository.save(admin);
   }
 
-  // async findByFullname(substring: string): Promise<AdminEntity[]> {
-  //   return this.userRepository.find({ where: { fullname: substring } });
-  // }
+  async findByFullname(substring: string): Promise<AdminEntity[]> {
+    return this.userRepository.find({
+      where: { fullname: ILike(`%${substring}%`) },
+    });
+  }
 
   async getUserByUsername(username: string): Promise<AdminEntity | null> {
     return this.userRepository.findOneBy({ username: username });

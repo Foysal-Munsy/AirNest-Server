@@ -11,10 +11,10 @@ export class AdminController {
     return this.adminService.createAdmin(dto);
   }
 
-  // @Get('find')
-  // async findByFullname(@Query('substring') substring: string) {
-  //   return this.adminService.findByFullname(substring);
-  // }
+  @Get('find')
+  searchNames(@Query('name') name: string) {
+    return this.adminService.findByFullname(name);
+  }
 
   @Get(':username')
   async getUserByUsername(@Param('username') username: string) {
