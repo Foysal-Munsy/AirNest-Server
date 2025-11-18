@@ -42,7 +42,11 @@ export class AdminController {
       limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
       fileFilter: (req, file, cb) => {
         if (file.originalname.match(/\.(jpg|jpeg|png|webp)$/)) cb(null, true);
-        else cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+        else
+          cb(
+            new MulterError('LIMIT_UNEXPECTED_FILE', 'Invalid image format'),
+            false,
+          );
       },
     }),
   )
@@ -50,7 +54,7 @@ export class AdminController {
     @Body() dto: CreateUserDto,
     @UploadedFile() file: Express.Multer.File,
   ): string | object {
-    console.log(file.path);
+    console.log(file);
     dto.nidImage = file.path;
     return this.adminService.createUser(dto);
   }

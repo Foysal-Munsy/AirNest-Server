@@ -15,6 +15,9 @@ export class CreateUserDto {
 
   @IsNotEmpty({ message: 'NID number is required' })
   @Matches(/^\d{10}$/, { message: 'NID must be 10 digits' })
+  // @IsNumber({}, { message: 'NID must be number' })
+  // @Length(10, 10, { message: '10 digit only' })
+  // @Transform(({ value }) => Number(value))
   nidNumber: string;
 
   @IsOptional()

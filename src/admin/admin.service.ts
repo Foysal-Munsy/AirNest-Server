@@ -35,7 +35,7 @@ export class AdminService {
       nidImage: dto.nidImage,
     };
     this.users.push(newUser);
-    return { message: 'User created successfully', data: newUser };
+    return { message: 'User created successfully' };
   }
 
   updateUser(id: number, dto: UpdateUserDto): string | object {
