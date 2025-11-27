@@ -1,5 +1,7 @@
 
-import { Entity,Column,PrimaryColumn, BeforeInsert, Check } from "typeorm";
+import { Ticket } from "src/traveller/ticket.entity";
+import { Entity,Column,PrimaryColumn, BeforeInsert, Check, OneToMany, OneToOne } from "typeorm";
+import { Passport } from "./passport.entity";
 
 @Entity('traveller')
 export class TravellerEntity{
@@ -25,6 +27,12 @@ export class TravellerEntity{
     profilepic:string;
     @Column({nullable:true})
     pdfdoc:string;
+
+    @OneToMany(()=>Ticket, (tickets)=> tickets.traveller)
+    tickets: Ticket[];
+
+    @OneToOne(()=>Passport,(passport)=>passport.traveller)
+    passport:Passport;
 
   
 }

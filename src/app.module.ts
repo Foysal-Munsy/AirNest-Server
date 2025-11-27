@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { TravellerModule } from './traveller/traveller.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+
 @Module({
   imports: [TravellerModule, TypeOrmModule.forRoot(
 { type: 'postgres',
@@ -15,7 +16,7 @@ password: 'Taushif@321',
 database: 'AirnestTraveller',
 autoLoadEntities: true,
 synchronize: true,
-} ),
+} ), 
 ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,7 +1,6 @@
 import { Controller ,Get,Post,Delete,Patch,Body,Param, Query, Redirect, UseInterceptors, UploadedFile} from '@nestjs/common';
 import{TravellerService} from './traveller.service';
 import { CreateUserDto } from './cretae_user.dto';
-import { UpdateUserDto } from './Update_user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PdfvalidationpipePipe } from 'src/common/pipes/pdfvalidationpipe/pdfvalidationpipe.pipe';
 import { ParseIntPipe } from '@nestjs/common';
@@ -21,9 +20,30 @@ async create(@Body()createuserdto:CreateUserDto,@UploadedFile(new Pdfvalidationp
  return await this.travellerservice.create(createuserdto,file.originalname);
 }
 
+@Post('add-ticket')
+async ticketadder(@Body() body:{seatNo:number,price:number,id:number})
+{
+    return await this.travellerservice.createticket(
+        body.seatNo,
+        body.price,
+        body.id
+    );
+}
+
+@Post('passport')
+async passportshower(@Body() body:{passportnumber:string,issuedate:string,id:number})
+{
+    return await this.travellerservice.passport(
+        body.passportnumber,
+        body.issuedate,
+        body.id
+    );
+}
+
 @Get()
 async getalluser(){
     return await this.travellerservice.findall();
+
 }
 
 @Get('nullname')
