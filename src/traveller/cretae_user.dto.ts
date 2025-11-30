@@ -2,10 +2,11 @@ import { IsEmail, IsNotEmpty, IsOptional, isString, IsString, MATCHES, Matches, 
 
 export class CreateUserDto{
     
-    @Matches(/^[a-zA-Z0-9]+$/,{message:'no special characters allowed'})
+   
     
     @IsOptional()
     @IsString()
+     @Matches(/^[a-zA-Z0-9]+$/,{message:'no special characters allowed'})
     fullname ?: string;
     @IsEmail()
     email?: string;

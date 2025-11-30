@@ -8,7 +8,9 @@ import { Repository } from 'typeorm';
 import { IsNull } from 'typeorm';
 import { Ticket } from './ticket.entity';
 import { Passport } from './passport.entity';
-import { promises } from 'dns';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+
 
 @Injectable()
 export class TravellerService {
@@ -16,16 +18,31 @@ export class TravellerService {
 
   constructor(@InjectRepository(TravellerEntity) private travellerrepo: Repository<TravellerEntity>,
               @InjectRepository(Ticket) private ticketrepo: Repository<Ticket>,
-              @InjectRepository(Passport) private passportrepo: Repository<Passport>){}
+              @InjectRepository(Passport) private passportrepo: Repository<Passport>,
+              private jwtService : JwtService){}
   async create(createuserdto:CreateUserDto,filename:string): Promise<TravellerEntity>
   {
-    const newtraveller = this.travellerrepo.create({...createuserdto,pdfdoc:filename})
+    const salt = await  bcrypt.genSalt();
+    const hashpass= await  bcrypt.hash(createuserdto.password,salt)
+    const newtraveller = this.travellerrepo.create({...createuserdto,password:hashpass,pdfdoc:filename})
     return await this.travellerrepo.save(newtraveller);
   }
-        
 
 
-    async findall(): Promise<TravellerEntity[]>
+        async login(email: string, pass: string): Promise<{access_token:string}|string> {
+    const user = await this.travellerrepo.findOneBy({ email: email });
+    if (!user) {
+        return "User not found"; 
+    }
+    const isMatch = await bcrypt.compare(pass, user.password);
+    if (!isMatch) {
+        return "Wrong password";
+    }
+    const payload = {email:user.email,id:user.id}
+    return  {access_token: this.jwtService.sign(payload)};
+    }
+
+        async findall(): Promise<TravellerEntity[]>
     {
      return await this.travellerrepo.find({
         relations:{ tickets:true,
