@@ -1,4 +1,4 @@
-import { NotFoundException, Injectable } from '@nestjs/common';
+import { NotFoundException, Injectable,UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './cretae_user.dto';
 import { UpdateUserDto } from './Update_user.dto';
 import { Express } from 'express';
@@ -32,11 +32,11 @@ export class TravellerService {
         async login(email: string, pass: string): Promise<{access_token:string}|string> {
     const user = await this.travellerrepo.findOneBy({ email: email });
     if (!user) {
-        return "User not found"; 
+     throw new NotFoundException("User not found"); 
     }
     const isMatch = await bcrypt.compare(pass, user.password);
     if (!isMatch) {
-        return "Wrong password";
+    throw new UnauthorizedException("Invalid credentials (Password wrong)")
     }
     const payload = {email:user.email,id:user.id}
     return  {access_token: this.jwtService.sign(payload)};
