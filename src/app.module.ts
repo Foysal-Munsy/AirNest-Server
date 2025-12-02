@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HostModule } from './host/host.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -11,14 +12,15 @@ import { HostModule } from './host/host.module';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'sifat',        
-      database: 'air-host',     
+      password: 'sifat',
+      database: 'air-host',
       autoLoadEntities: true,
       synchronize: true,
     }),
-    HostModule,                 
+    HostModule,
+    AuthModule,
   ],
-  controllers: [AppController], 
-  providers: [AppService],      
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

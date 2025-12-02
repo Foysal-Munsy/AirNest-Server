@@ -1,3 +1,5 @@
+import { Type } from 'class-transformer';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export enum PropertySort {
   PRICE_ASC = 'price_asc',
@@ -6,9 +8,20 @@ export enum PropertySort {
 }
 
 export class FilterPropertyDto {
- 
+  @IsOptional()
+  @IsString()
   city?: string;
-  minPrice?: string; 
+
+  @IsOptional()
+  @IsString()
+  minPrice?: string;
+
+  @IsOptional()
+  @IsEnum(PropertySort)
   sort?: PropertySort;
-  limit?: string; 
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  limit?: number;
 }

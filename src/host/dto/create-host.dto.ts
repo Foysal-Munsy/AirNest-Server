@@ -8,4 +8,17 @@ export class CreateHostDto {
   @IsInt()
   @Min(0)
   age: number;
+
+  @IsString()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+
+  @IsString()
+  bio: string;
+  @IsString()
+  phone: string;
 }
