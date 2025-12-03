@@ -10,8 +10,11 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { RoleGuard } from '../auth/role.guard';
+
 import { LoginUserDto } from './dto/login-user.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { RoleGuard } from 'src/auth/role.guard';
+import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -29,12 +32,13 @@ export class UsersController {
     return this.usersService.login(dto);
   }
 
+  @UseGuards(AuthGuard)
   @Get(':username')
   async getUserByUsername(@Param('username') username: string) {
     return this.usersService.findOne(username);
   }
-
-  @UseGuards(RoleGuard)
+  @Roles('Admin')
+  @UseGuards(AuthGuard, RoleGuard)
   @Delete(':username')
   async deleteUser(@Param('username') username: string) {
     return this.usersService.remove(username);

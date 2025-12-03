@@ -1,37 +1,26 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
-import { Request } from 'express';
-
-interface RequestWithUser extends Request {
-  user?: {
-    role?: string;
-  };
-}
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { ROLES_KEY } from './roles.decorator';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest<RequestWithUser>();
-    const user = request.user;
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+    if (!requiredRoles) {
+      return true;
+    }
+    const { user } = context.switchToHttp().getRequest();
 
-    if (!user) {
-      throw new ForbiddenException(
-        'Access denied. User not found in request context.',
-      );
+    // If no user is attached to the request (e.g. AuthGuard failed or wasn't used), deny access
+    if (!user || !user.role) {
+      return false;
     }
 
-    // Restrict access to Admin users only.
-    const isAdmin =
-      typeof user.role === 'string' && user.role.toLowerCase() === 'admin';
-
-    if (!isAdmin) {
-      throw new ForbiddenException('Access denied. Admin role required.');
-    }
-
-    return true;
+    return requiredRoles.includes(user.role);
   }
 }
