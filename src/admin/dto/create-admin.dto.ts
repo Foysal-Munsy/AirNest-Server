@@ -5,7 +5,6 @@ import {
   IsString,
   Length,
 } from 'class-validator';
-
 export class CreateAdminDto {
   @IsNotEmpty({ message: 'You must write an username' })
   @IsString()
