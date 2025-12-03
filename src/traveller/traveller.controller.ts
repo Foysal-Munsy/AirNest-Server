@@ -38,7 +38,7 @@ async login(@Body() body:any){
 //     return user;
 // }
 async getprofile(@Request() req:any){
-    return await this.travellerservice.findone(req.user.userId)
+    return await this.travellerservice.findone(req.user.id)
 }
 
 
