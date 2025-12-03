@@ -5,7 +5,8 @@ import { AdminModule } from './admin/admin.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-
+import * as dotenv from 'dotenv';
+dotenv.config();
 @Module({
   imports: [
     AdminModule,
@@ -13,8 +14,8 @@ import { AuthModule } from './auth/auth.module';
       type: 'postgres',
       host: 'localhost',
       username: 'postgres',
-      password: 'foysal613', // database password
-      database: 'airnest', // database name
+      password: process.env.DB_PASSWORD, // database password
+      database: process.env.DB_NAME, // database name
       autoLoadEntities: true,
       synchronize: true,
     }),
