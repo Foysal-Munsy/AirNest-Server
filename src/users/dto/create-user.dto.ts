@@ -1,9 +1,14 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
-export class CreateAdminDto {
+import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
+
+export class CreateUserDto {
   @IsNotEmpty({ message: 'Enter an username' })
   @IsString()
   @Length(4, 100)
   username: string;
+
+  @IsNotEmpty()
+  @IsEmail({}, { message: 'Enter a valid email address' })
+  email: string;
 
   @IsNotEmpty({ message: 'Enter your full name' })
   @IsString()

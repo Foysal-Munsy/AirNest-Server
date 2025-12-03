@@ -1,25 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { IsEmail, IsNotEmpty, IsOptional, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class CreateUserDto {
-  @IsNotEmpty({ message: 'Name is required' })
-  @Matches(/^[A-Za-z\s]+$/, { message: 'Name contain only alphabet' })
-  name: string;
+  @IsNotEmpty({ message: 'Enter an username' })
+  @IsString()
+  @Length(4, 100)
+  username: string;
 
-  @IsNotEmpty({ message: 'Email is required' })
-  @IsEmail()
-  @Matches(/\.xyz$/, { message: 'use .xyz' })
-  email: string;
-  @IsNotEmpty({ message: 'Role is required' })
-  role: string; // host or guest
+  @IsNotEmpty({ message: 'Enter your full name' })
+  @IsString()
+  @Length(4, 150)
+  fullname: string;
 
-  @IsNotEmpty({ message: 'NID number is required' })
-  @Matches(/^\d{10}$/, { message: 'NID must be 10 digits' })
-  // @IsNumber({}, { message: 'NID must be number' })
-  // @Length(10, 10, { message: '10 digit only' })
-  // @Transform(({ value }) => Number(value))
-  nidNumber: string;
-
-  @IsOptional()
-  nidImage?: string;
+  @IsNotEmpty({ message: 'Enter a valid password' })
+  @IsString()
+  @Length(6, 10)
+  password: string;
 }
