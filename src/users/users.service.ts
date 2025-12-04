@@ -1,14 +1,8 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -22,6 +16,19 @@ export class UsersService {
     return this.repo.save(user);
   }
 
+  async update(username: string, dto: CreateUserDto) {
+    const user = await this.findOne(username);
+
+    if (dto.password) {
+      const bcrypt = await import('bcrypt');
+      const salt = await bcrypt.genSalt();
+      dto.password = await bcrypt.hash(dto.password, salt);
+    }
+
+    Object.assign(user, dto);
+    return this.repo.save(user);
+  }
+
   async findOne(username: string): Promise<UserEntity> {
     const user = await this.repo.findOneBy({ username });
     if (!user) {
@@ -31,37 +38,59 @@ export class UsersService {
     return user;
   }
 
-  async login(dto: LoginUserDto) {
-    const user = await this.repo.findOneBy({ username: dto.username });
+  async findOneById(id: number): Promise<UserEntity> {
+    const user = await this.repo.findOneBy({ id });
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new NotFoundException('User not found');
     }
-
-    const passwordMatches = await bcrypt.compare(dto.password, user.password);
-    if (!passwordMatches) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const { password: _password, ...safeUser } = user;
-    void _password;
-    return {
-      message: 'Login successful',
-      user: safeUser,
-    };
+    return user;
   }
+
+  // async login(dto: LoginUserDto) {
+  //   const user = await this.repo.findOneBy({ username: dto.username });
+  //   if (!user) {
+  //     throw new UnauthorizedException('Invalid credentials');
+  //   }
+
+  //   const passwordMatches = await bcrypt.compare(dto.password, user.password);
+  //   if (!passwordMatches) {
+  //     throw new UnauthorizedException('Invalid credentials');
+  //   }
+
+  //   // const { password: _password, ...safeUser } = user;
+  //   // void _password;
+  //   return {
+  //     message: 'Login successful',
+  //     user: user,
+  //   };
+  // }
 
   async remove(username: string) {
     const user = await this.repo.findOneBy({ username });
     if (!user) {
       throw new NotFoundException('user not found');
     }
-
     await this.repo.remove(user);
-    const { password: _password, ...safeUser } = user;
-    void _password;
+
     return {
       message: 'User deleted',
-      user: safeUser,
+      user,
     };
+  }
+
+  async updateRole(
+    username: string,
+    role: 'Admin' | 'Host' | 'Guest' | 'Support',
+  ) {
+    const user = await this.findOne(username);
+    user.role = role;
+    const savedUser = await this.repo.save(user);
+    return {
+      message: 'User role updated',
+      user: savedUser,
+    };
+  }
+  async findAll(): Promise<UserEntity[]> {
+    return this.repo.find();
   }
 }
