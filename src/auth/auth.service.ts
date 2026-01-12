@@ -17,14 +17,12 @@ export class AuthService {
     private repo: Repository<UserEntity>,
   ) {}
 
-  //   create user
   async signUp(dto: SignUpDto): Promise<UserEntity> {
     // console.log(dto);
-    const existingUser = await this.usersService.findOne(dto.username);
+    const existingUser = await this.repo.findOneBy({ username: dto.username });
     if (existingUser) {
       throw new UnauthorizedException('User already exists');
-    }
-    return this.usersService.createUser(dto);
+    } else return this.usersService.createUser(dto);
   }
 
   //   login user
