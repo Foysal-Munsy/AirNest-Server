@@ -19,8 +19,12 @@ export class AuthService {
 
   //   create user
   async signUp(dto: SignUpDto): Promise<UserEntity> {
-    const user = this.repo.create(dto);
-    return this.repo.save(user);
+    // console.log(dto);
+    const existingUser = await this.usersService.findOne(dto.username);
+    if (existingUser) {
+      throw new UnauthorizedException('User already exists');
+    }
+    return this.usersService.createUser(dto);
   }
 
   //   login user

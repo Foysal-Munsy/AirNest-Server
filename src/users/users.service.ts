@@ -3,17 +3,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private repo: Repository<UserEntity>,
+    private readonly mailerService: MailerService,
   ) {}
 
   async createUser(dto: CreateUserDto): Promise<UserEntity> {
     const user = this.repo.create(dto);
-    return this.repo.save(user);
+
+    const savedUser = await this.repo.save(user);
+    // console.log('Hello', savedUser);
+    return savedUser;
   }
 
   async update(username: string, dto: CreateUserDto) {

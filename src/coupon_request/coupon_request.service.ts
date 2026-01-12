@@ -34,4 +34,20 @@ export class CouponRequestService {
       relations: ['user', 'coupon'],
     });
   }
+
+  async findByUserId(userId: number) {
+    const requests = await this.couponRequestRepository.find({
+      where: { user: { id: userId } },
+      relations: ['coupon'],
+    });
+    return requests.map((request) => request.coupon);
+  }
+
+  async findByCouponId(couponId: number) {
+    const requests = await this.couponRequestRepository.find({
+      where: { coupon: { id: couponId } },
+      relations: ['user'],
+    });
+    return requests.map((request) => request.user);
+  }
 }
